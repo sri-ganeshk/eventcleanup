@@ -1,0 +1,149 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F3F3F3;
+  }
+  
+  header {
+    background-color: blue;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  header h1 {
+    color: white;
+    font-size: 36px;
+    margin: 0;
+  }
+  
+  nav {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    border-bottom: 2px solid lightgray;
+  }
+  
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  nav a {
+    display: block;
+    padding: 10px 20px;
+    color: black;
+    text-decoration: none;
+  }
+  
+  nav a:hover,
+  nav a.active {
+    color: blue;
+  }
+  
+  main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  section {
+    margin-bottom: 40px;
+  }
+  
+  section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+  
+  form label {
+    margin-bottom: 10px;
+  }
+  
+  form input,
+  form textarea {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    width: 50%;
+  }
+  
+  form button {
+    background-color: #007298;
+    color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .footer-logo img {
+    height: 50px;
+    width: 50px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-info p {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .event-container{
+    width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color:  #bb7cff;
+    text-align: center;
+  }
+  .event-title{
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  .event-info{
+    display: inline-block;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 300px;
+  }
+  .event-info p{
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  .event-info span{
+    font-weight: bold;
+  }
+ header {
+  display: flex;
+  align-items: center;
+}
+
+img {
+  height: 90px;
+  margin-right: 10px;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: bold;
+}
+ .i
+ {
+     
+    height: 90px;
+    margin-right: 10px
+ }
