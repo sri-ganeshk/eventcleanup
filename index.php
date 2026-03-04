@@ -105,9 +105,9 @@ $all_events = $db->trips->find(
 
   <footer>
     <div class="footer-inner">
-      <p><strong>Centre for Engineering and Education Research</strong><br>
-      Vignan's Institute of Information Technology (A), Visakhapatnam</p>
-      <p style="margin-top:8px;opacity:.7;font-size:13px;">K N SRI GANESH · L ABHIRAM · P SUDEEP REDDY · M MANEESH · M JAYENDRA</p>
+      <p><strong>EventCleanup</strong><br>
+      A community cleanup event platform built with PHP & MongoDB.</p>
+      <p style="margin-top:8px;opacity:.7;font-size:13px;">Designed to bring people together for a cleaner environment.</p>
     </div>
   </footer>
 </body>
