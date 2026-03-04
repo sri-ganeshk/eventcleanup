@@ -1,109 +1,114 @@
 <?php
 /**
  * index.php — Home page
- * Uses MongoDB instead of MySQL
  */
 require_once __DIR__ . '/config.php';
 
-// Fetch upcoming events (date >= now), sorted by date ascending
-$now = new MongoDB\BSON\UTCDateTime(time() * 1000);
+$now        = new MongoDB\BSON\UTCDateTime(time() * 1000);
 $all_events = $db->trips->find(
     ['date' => ['$gte' => $now]],
-    ['sort' => ['date' => 1]]
+    ['sort' => ['date' => 1], 'limit' => 3]
 );
 ?>
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>EventCleanup</title>
-    <link rel="icon" href="logom.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
-  </head>
-  <body>
-    <header>
-      <img class="i" src="logom.jpg">
-      <h1>EventCleanup</h1>
-    </header>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="event.php">Events</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-    <main>
-      <section id="home">
-        <h2>Welcome to EventCleanup</h2>
-        <p>We're dedicated to organizing community cleanups to make our neighborhoods a better place for everyone.</p>
-      </section>
-      <br><hr><br>
-      <section id="about">
-        <h2>About Us</h2>
-        <p>EventCleanup is a college project that was made in 2023. We believe that by working together, we can make a positive impact on our communities.</p>
-      </section>
-      <br><hr><br>
-      <section id="events">
-        <h2>Upcoming Cleanups</h2>
-        <ul>
-          <?php foreach ($all_events as $row): ?>
-            <?php
-              $date = $row['date'] instanceof MongoDB\BSON\UTCDateTime
-                ? $row['date']->toDateTime()->format('Y-m-d H:i')
-                : $row['date'];
-            ?>
-            <li><?= htmlspecialchars($date) ?> : <?= htmlspecialchars($row['location']) ?> : <?= htmlspecialchars($row['name']) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      </section>
-      <br><hr><br>
-      <section id="contact">
-        <h2>Contact Us</h2>
-        <form>
-          <label for="name">Name:</label>
-          <input type="text" id="name" required>
-          <label for="email">Email:</label>
-          <input type="email" id="email" required>
-          <label for="message">Message:</label>
-          <textarea id="message" required></textarea>
-          <button type="submit">Submit</button>
-        </form>
-      </section>
-      <br><hr><br>
-      <section>
-        <h2>Why Clean Our Public Places?</h2>
-        <p>
-          <img src="https://www.aucklandcouncil.govt.nz/Lists/ParksDetailImages/kell-park-path-stump.jpg?width=759&height=416" alt="A park with clean paths and picnic tables">
-        </p>
-        <p>Public places, such as parks, streets, and beaches, are important areas where people gather and socialize. Keeping these spaces clean and well-maintained is crucial for the health and well-being of the community and the environment.</p>
-        <p>Litter, debris, and other waste can attract pests, harm wildlife, and even contaminate water sources. Cleaning up public spaces can prevent these negative consequences and create a safer, healthier, and more enjoyable environment for everyone.</p>
-      </section>
-      <br><hr><br>
-      <section>
-        <h2>Why Participate in Cleanup Events?</h2>
-        <p>
-          <img src="https://media.gettyimages.com/id/84423012/photo/young-people-collecting-garbage-on-beach.jpg?s=612x612&w=0&k=20&c=q1OUNqbRm1TrLkq_0RAsS0y8G3Qtm2mdphL4DZ0QlVU=" alt="A group of people cleaning a beach together">
-        </p>
-        <p>Participating in public cleanup events is a great way to make a positive impact on the community and the environment.</p>
-        <p>Not only will you help keep public spaces clean and safe, but you will also show your support for environmental conservation and sustainability.</p>
-      </section>
-    </main>
-    <footer>
-      <div class="container">
-        <div class="footer-logo">
-          <img src="logo.png" alt="Logo">
-        </div>
-        <div class="footer-info">
-          <p><b>Centre for Engineering and Education Research<br>Vignan's Institute of Information Technology (A), Visakhapatnam</b></p>
-          <p>K N SRI GANESH 22L31A0596</p>
-          <p>L ABHIRAM 22L31A05B0</p>
-          <p>P SUDEEP REDDY 22L31A05E9</p>
-          <p>M.MANEESH 22L31A05B7</p>
-          <p>M JAYENDRA 22L31A05C1</p>
-        </div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventCleanup — Community Cleanups</title>
+  <link rel="icon" href="logom.jpg" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo-wrap">
+        <img src="logom.jpg" alt="EventCleanup logo" class="logo">
+        <span class="brand">EventCleanup</span>
       </div>
-    </footer>
-  </body>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="event.php">Events</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <h1>Clean Up. <span>Come Together.</span></h1>
+      <p>Join community cleanup events in your area and make a real difference in your neighbourhood.</p>
+      <a href="event.php" class="btn-primary">Browse Events</a>
+    </section>
+
+    <!-- Upcoming previews -->
+    <section class="section" id="events">
+      <h2>Upcoming Cleanups</h2>
+      <ul class="preview-list">
+        <?php foreach ($all_events as $row):
+          $date = $row['date'] instanceof MongoDB\BSON\UTCDateTime
+            ? $row['date']->toDateTime()->format('d M Y')
+            : $row['date'];
+        ?>
+          <li>
+            <span class="preview-date"><?= htmlspecialchars($date) ?></span>
+            <span class="preview-name"><?= htmlspecialchars($row['name']) ?></span>
+            <span class="preview-loc">📍 <?= htmlspecialchars($row['location']) ?></span>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <a href="event.php" class="btn-outline">See all events →</a>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <h2>About Us</h2>
+      <p>EventCleanup is a college project born in 2023. We believe small actions — picking up litter, organizing a beach cleanup, clearing a park — add up to a healthier, happier community for everyone.</p>
+    </section>
+
+    <!-- Why section -->
+    <section class="section why-grid">
+      <div class="why-card">
+        <div class="why-icon">🌍</div>
+        <h3>Protect the Environment</h3>
+        <p>Litter attracts pests, harms wildlife and contaminates water. A clean neighbourhood is a healthy one.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🤝</div>
+        <h3>Build Community</h3>
+        <p>Cleanup events bring people together. Meet neighbours, learn new skills and take collective pride in your area.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">✅</div>
+        <h3>Make an Impact</h3>
+        <p>Even a few hours of your time can transform a public space and inspire others to do the same.</p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <h2>Contact Us</h2>
+      <form class="contact-form">
+        <input type="text" placeholder="Your name" required>
+        <input type="email" placeholder="Your email" required>
+        <textarea rows="5" placeholder="Your message" required></textarea>
+        <button type="submit" class="btn-primary">Send Message</button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p><strong>Centre for Engineering and Education Research</strong><br>
+      Vignan's Institute of Information Technology (A), Visakhapatnam</p>
+      <p style="margin-top:8px;opacity:.7;font-size:13px;">K N SRI GANESH · L ABHIRAM · P SUDEEP REDDY · M MANEESH · M JAYENDRA</p>
+    </div>
+  </footer>
+</body>
 </html>

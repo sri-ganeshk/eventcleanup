@@ -3,7 +3,7 @@
     "description": "EventCleanup - Community Cleanup Event Platform",
     "require": {
         "php": ">=8.0",
-        "mongodb/mongodb": "^1.15"
+        "mongodb/mongodb": "^2.0"
     },
     "config": {
         "optimize-autoloader": true
