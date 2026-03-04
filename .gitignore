@@ -1,5 +1,30 @@
-# EventCleanup — .gitignore
+# Application Environment
 .env
-vendor/
+.env.*
+!.env.example
+
+# Composer dependencies
+/vendor/
+composer.phar
+
+# Logs
 *.log
+logs/
+
+# macOS / System
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary / Cache
+/tmp/
+/cache/
