@@ -1,33 +1,30 @@
 <?php
-  // Set connection variables
-    $server ="localhost";
-    $username = "id20261857_root";
-    $password  = "Gan_123456789";
-    $db_name = "id20261857_localhost";
-    
-    $con =new mysqli($server,$username,$password,$db_name);
-    // Check for connection success
-    if(!$con){
-        die("connection to this database failed due to" . mysqli_connect_error());
-    }
-$sql = "SELECT * FROM trip WHERE date >= NOW() ORDER BY date ASC";
- $all_events = $con->query($sql);
+/**
+ * index.php — Home page
+ * Uses MongoDB instead of MySQL
+ */
+require_once __DIR__ . '/config.php';
+
+// Fetch upcoming events (date >= now), sorted by date ascending
+$now = new MongoDB\BSON\UTCDateTime(time() * 1000);
+$all_events = $db->trips->find(
+    ['date' => ['$gte' => $now]],
+    ['sort' => ['date' => 1]]
+);
 ?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>EventCleanup </title>
-    <link rel = "icon" href = "logom.jpg"  type = "image/x-icon">
+    <title>EventCleanup</title>
+    <link rel="icon" href="logom.jpg" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
   </head>
   <body>
     <header>
-        <img class ="i"src="logom.jpg" >
+      <img class="i" src="logom.jpg">
       <h1>EventCleanup</h1>
-      
     </header>
     <nav>
       <ul>
@@ -45,21 +42,20 @@ $sql = "SELECT * FROM trip WHERE date >= NOW() ORDER BY date ASC";
       <br><hr><br>
       <section id="about">
         <h2>About Us</h2>
-        <p>EventCleanup is a collage project that was made in 2023. We believe that by working together, we can make a positive impact on our communities.</p>
+        <p>EventCleanup is a college project that was made in 2023. We believe that by working together, we can make a positive impact on our communities.</p>
       </section>
       <br><hr><br>
-      
       <section id="events">
         <h2>Upcoming Cleanups</h2>
         <ul>
-            <main>
-      <?php
-      while($row = mysqli_fetch_assoc($all_events)){
-      ?>
-          <li><?php echo $row["date"]?>  :  <?php echo $row["location"]?>  :  <?php echo $row["name"]?></li>
-          <?php
-      }
-  ?>
+          <?php foreach ($all_events as $row): ?>
+            <?php
+              $date = $row['date'] instanceof MongoDB\BSON\UTCDateTime
+                ? $row['date']->toDateTime()->format('Y-m-d H:i')
+                : $row['date'];
+            ?>
+            <li><?= htmlspecialchars($date) ?> : <?= htmlspecialchars($row['location']) ?> : <?= htmlspecialchars($row['name']) ?></li>
+          <?php endforeach; ?>
         </ul>
       </section>
       <br><hr><br>
@@ -90,28 +86,24 @@ $sql = "SELECT * FROM trip WHERE date >= NOW() ORDER BY date ASC";
         <p>
           <img src="https://media.gettyimages.com/id/84423012/photo/young-people-collecting-garbage-on-beach.jpg?s=612x612&w=0&k=20&c=q1OUNqbRm1TrLkq_0RAsS0y8G3Qtm2mdphL4DZ0QlVU=" alt="A group of people cleaning a beach together">
         </p>
-        <p>Participating in public cleanup events is a great way to make a positive impact on the community and the environment. By working together with others, you can make a big difference in just a short amount of time.</p>
-        <p>Not only will you help keep public spaces clean and safe, but you will also show your support for environmental conservation and sustainability. Plus, participating in cleanup events can be a fun and rewarding experience, allowing you to meet new people, learn new skills, and make a positive impact in your community.</p>
+        <p>Participating in public cleanup events is a great way to make a positive impact on the community and the environment.</p>
+        <p>Not only will you help keep public spaces clean and safe, but you will also show your support for environmental conservation and sustainability.</p>
       </section>
-      
-      
     </main>
     <footer>
-    <div class="container">
-      <div class="footer-logo">
-        <img src="logo.png" alt="Logo">
+      <div class="container">
+        <div class="footer-logo">
+          <img src="logo.png" alt="Logo">
+        </div>
+        <div class="footer-info">
+          <p><b>Centre for Engineering and Education Research<br>Vignan's Institute of Information Technology (A), Visakhapatnam</b></p>
+          <p>K N SRI GANESH 22L31A0596</p>
+          <p>L ABHIRAM 22L31A05B0</p>
+          <p>P SUDEEP REDDY 22L31A05E9</p>
+          <p>M.MANEESH 22L31A05B7</p>
+          <p>M JAYENDRA 22L31A05C1</p>
+        </div>
       </div>
-      <div class="footer-info">
-          <p><b>Centre for Engineering and Education Research
-Vignan's Institute of Information Technology (A), Visakhapatnam</b></p>
-        <p>K N SRI GANESH 22L31A0596</p>
-        <p>L ABHIRAM 22L31A05B0</p>
-        <p>P SUDEEP REDDY 22L31A05E9</p>
-        <p>M.MANEESH 22L31A05B7</p>
-        <p>M JAYENDRA 22L31A05C1</p>
-      </div>
-    </div>
-  </footer>
-
+    </footer>
   </body>
 </html>

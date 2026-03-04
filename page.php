@@ -1,119 +1,122 @@
 <?php
-$insert = false;
-if(isset($_POST['name'])){
-    // Set connection variables
-    $server ="localhost";
-    $username = "id20261857_root";
-    $password  = "Gan_123456789";
-    $db_name = "id20261857_localhost";
-    
-    $con =new mysqli($server,$username,$password,$db_name);
-    // Check for connection success
-    if(!$con){
-        die("connection to this database failed due to" . mysqli_connect_error());
+/**
+ * page.php — Add a new cleanup event
+ * Uses MongoDB instead of MySQL
+ */
+require_once __DIR__ . '/config.php';
+
+$insert  = false;
+$error   = '';
+
+if (isset($_POST['name'])) {
+    $name     = trim($_POST['name']);
+    $location = trim($_POST['location']);
+    $dateStr  = trim($_POST['date']);
+    $zip      = trim($_POST['zip']);
+    $phone    = trim($_POST['phone']);
+    $map      = trim($_POST['map']);
+    $desc     = trim($_POST['desc']);
+
+    // Convert the datetime-local string to MongoDB UTCDateTime
+    try {
+        $dateObj  = new DateTime($dateStr);
+        $mongoDate = new MongoDB\BSON\UTCDateTime($dateObj->getTimestamp() * 1000);
+    } catch (Exception $e) {
+        $mongoDate = null;
     }
-    echo "Succesfully Event Sumbited";
 
-    // Collect post variables
-    $name = $_POST['name'];
-    $location = $_POST['location'];
-    $date = $_POST['date'];
-    $zip = $_POST['zip'];
-    $phone = $_POST['phone'];
-    $map = $_POST['map'];
-    $desc = $_POST['desc'];
-    $sql = "INSERT INTO `id20261857_localhost`.`trip` (`name`, `date`, `location`, `zip`, `phone`,`map`, `des`, `dt`) VALUES ('$name', '$date', '$location', '$zip', '$phone','$map', '$desc', current_timestamp());";
-    //echo $sql;
+    $result = $db->trips->insertOne([
+        'name'     => $name,
+        'location' => $location,
+        'date'     => $mongoDate,
+        'zip'      => $zip,
+        'phone'    => $phone,
+        'map'      => $map,
+        'des'      => $desc,
+        'lat'      => null,
+        'lng'      => null,
+        'dt'       => new MongoDB\BSON\UTCDateTime(),
+    ]);
 
-    // Execute the query
-    if($con->query($sql) == true){
-        // echo "Successfully inserted";
-
-        // Flag for successful insertion
+    if ($result->getInsertedId()) {
         $insert = true;
+    } else {
+        $error = "Something went wrong, please try again.";
     }
-    else{
-        echo "ERROR: $sql <br> $con->error";
-    }
-
-    // Close the database connection
-    $con->close();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+  <head>
     <meta charset="UTF-8">
-    <title>EventCleanup </title>
-    <link rel = "icon" href = "logom.jpg"  type = "image/x-icon">
+    <title>EventCleanup — Add Event</title>
+    <link rel="icon" href="logom.jpg" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
   </head>
   <body>
     <header>
-        <img class ="i"src="logom.jpg" >
+      <img class="i" src="logom.jpg">
       <h1>EventCleanup</h1>
-      
     </header>
-        <nav>
-          <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="event.php">Events</a></li>
-          </ul>
-        </nav>
-<body>
+    <nav>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="event.php">Events</a></li>
+      </ul>
+    </nav>
     <div class="container">
-        <br><br><br>
-        <script>
-function validateForm() {
-  var name = document.forms["eventForm"]["name"].value;
-  var location = document.forms["eventForm"]["location"].value;
-  var date = document.forms["eventForm"]["date"].value;
-  var zip = document.forms["eventForm"]["zip"].value;
-  var phone = document.forms["eventForm"]["phone"].value;
-  var desc = document.forms["eventForm"]["desc"].value;
+      <br><br><br>
 
-  if (name == "" || location == "" || date == "" || zip == "" || phone == "" || desc == "" || map =="") {
-    alert("All fields must be filled out");
-    return false;
-  }
-   var today = new Date();
-  var enteredDate = new Date(date);
+      <?php if ($insert): ?>
+        <p style="color:green;text-align:center;font-size:20px;">✅ Event submitted successfully! <a href="event.php">View Events</a></p>
+      <?php elseif ($error): ?>
+        <p style="color:red;text-align:center;"><?= htmlspecialchars($error) ?></p>
+      <?php endif; ?>
 
-  if (enteredDate < today) {
-    alert("Date must be in the future");
-    return false;
-  }
-  return true;
-}
-</script>
+      <script>
+        function validateForm() {
+          var name     = document.forms["eventForm"]["name"].value;
+          var location = document.forms["eventForm"]["location"].value;
+          var date     = document.forms["eventForm"]["date"].value;
+          var zip      = document.forms["eventForm"]["zip"].value;
+          var phone    = document.forms["eventForm"]["phone"].value;
+          var desc     = document.forms["eventForm"]["desc"].value;
 
-<form action="page.php" method="post" name="eventForm" onsubmit="return validateForm()" >
-  <input type="text" name="name" id="name" placeholder="Event Name">
-  <label for="date">Event Date:</label>
-  <input type="datetime-local" name="date" id="date" placeholder="Date of the Event">
-  <input type="text" name="location" id="location" placeholder="Event Location">
-  <input type="number" name="zip" id="zip" placeholder="Event Pincode">
-  <input type="phone" name="phone" id="phone" placeholder="Contact Number">
-  <input type="link" name="map" id="map" placeholder="Google Map location URL">
-  <textarea name="desc" id="desc" cols="30" rows="10" placeholder="Enter any other information here"></textarea>
-  <button class="btn">Submit</button> 
-</form>
- 
-        </form>
+          if (!name || !location || !date || !zip || !phone || !desc) {
+            alert("All fields must be filled out");
+            return false;
+          }
+          var today       = new Date();
+          var enteredDate = new Date(date);
+          if (enteredDate < today) {
+            alert("Date must be in the future");
+            return false;
+          }
+          return true;
+        }
+      </script>
+
+      <form action="page.php" method="post" name="eventForm" onsubmit="return validateForm()">
+        <input type="text"           name="name"     id="name"     placeholder="Event Name" required>
+        <label for="date">Event Date:</label>
+        <input type="datetime-local" name="date"     id="date"     required>
+        <input type="text"           name="location" id="location" placeholder="Event Location" required>
+        <input type="number"         name="zip"      id="zip"      placeholder="Event Pincode" required>
+        <input type="tel"            name="phone"    id="phone"    placeholder="Contact Number" required>
+        <input type="url"            name="map"      id="map"      placeholder="Google Map location URL">
+        <textarea name="desc" id="desc" cols="30" rows="10" placeholder="Enter any other information here"></textarea>
+        <button class="btn" type="submit">Submit</button>
+      </form>
     </div>
-   
-</body>
-<footer>
+  </body>
+  <footer>
     <div class="container">
       <div class="footer-logo">
         <img src="logo.png" alt="Logo">
       </div>
       <div class="footer-info">
-          <p><b>Centre for Engineering and Education Research
-Vignan's Institute of Information Technology (A), Visakhapatnam</b></p>
+        <p><b>Centre for Engineering and Education Research<br>Vignan's Institute of Information Technology (A), Visakhapatnam</b></p>
         <p>K N SRI GANESH 22L31A0596</p>
         <p>L ABHIRAM 22L31A05B0</p>
         <p>P SUDEEP REDDY 22L31A05E9</p>
