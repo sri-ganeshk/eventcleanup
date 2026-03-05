@@ -1,10 +1,15 @@
 FROM php:8.2-apache
 
-# Install required system packages for Composer
+# Install required system packages for Composer and MongoDB extension
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install MongoDB PHP extension via PECL
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
 
 # Install Composer globally
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
